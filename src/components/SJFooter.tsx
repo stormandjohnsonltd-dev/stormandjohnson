@@ -6,7 +6,7 @@ import { whatsappLink } from "@/lib/utils";
 import { isMongoConnectionError } from "@/lib/db";
 
 export async function SJFooter() {
-  const phone = process.env.NEXT_PUBLIC_WHATSAPP || "2349041140745";
+  const phone = process.env.WHATSAPP || "2349041140745";
   const wa = whatsappLink(phone, "Hello Storm & Johnson, I’d like product support.");
 
   let socialLinks: {

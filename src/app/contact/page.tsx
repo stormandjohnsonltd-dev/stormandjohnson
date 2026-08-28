@@ -7,7 +7,7 @@ import { isMongoConnectionError } from "@/lib/db";
 import { whatsappLink } from "@/lib/utils";
 
 export default async function ContactPage() {
-  const phone = process.env.NEXT_PUBLIC_WHATSAPP || "2349041140745";
+  const phone = process.env.WHATSAPP || "2349041140745";
   const wa = whatsappLink(phone, "Hello Storm & Johnson, I’d like to make an enquiry.");
 
   let socialLinks: {

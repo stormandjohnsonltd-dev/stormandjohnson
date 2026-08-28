@@ -27,7 +27,7 @@ export function ProductEnquiryForm({
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
-  const companyWhatsApp = process.env.NEXT_PUBLIC_WHATSAPP || "";
+  const companyWhatsApp = process.env.WHATSAPP || "";
   const waUrl = useMemo(() => {
     if (!companyWhatsApp) return "";
     return whatsappLink(

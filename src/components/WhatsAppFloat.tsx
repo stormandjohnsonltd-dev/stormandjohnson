@@ -2,7 +2,7 @@ import { whatsappLink } from "@/lib/utils";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 
 export function WhatsAppFloat() {
-  const phone = process.env.NEXT_PUBLIC_WHATSAPP || "2349041140745";
+  const phone = process.env.WHATSAPP || "2349041140745";
   const href = whatsappLink(phone, "Hello Storm & Johnson, I need lighting support.");
 
   return (

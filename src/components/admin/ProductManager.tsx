@@ -224,7 +224,7 @@ export function ProductManager({
 
   const submitButtonLabel = (() => {
     if (!loading) return editingSlug ? "Update Product" : "Create Product";
-    if (submitPhase === "uploading") return "Uploading images to Firebase...";
+    if (submitPhase === "uploading") return "Uploading product images...";
     return editingSlug ? "Updating product..." : "Creating product...";
   })();
 

@@ -39,7 +39,7 @@ function getServiceAccount(): ServiceAccount | null {
 }
 
 export function isFirebaseAdminConfigured() {
-  return Boolean(getServiceAccount() && process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET);
+  return Boolean(getServiceAccount() && process.env.FIREBASE_STORAGE_BUCKET);
 }
 
 export function getFirebaseAdminBucket() {
@@ -53,7 +53,7 @@ export function getFirebaseAdminBucket() {
   if (!getApps().length) {
     initializeApp({
       credential: cert(serviceAccount),
-      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     });
   }
 

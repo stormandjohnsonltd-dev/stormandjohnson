@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" fill="none" role="img" aria-label="Storm and Johnson">
+  <defs>
+    <linearGradient id="sj-brand-lg" x1="34" y1="24" x2="146" y2="156" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5B301" />
+      <stop stop-color="#FF6A00" />
+    </linearGradient>
+    <linearGradient id="sj-glow-lg" x1="90" y1="12" x2="90" y2="78" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5B301" stop-opacity="0.4" />
+      <stop offset="1" stop-color="#F5B301" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="#0B1020" />
+  <ellipse cx="90" cy="46" rx="52" ry="28" fill="url(#sj-glow-lg)" />
+  <path
+    fill="url(#sj-brand-lg)"
+    d="M57 68c0-11.8 9.2-19.2 22.6-19.2 10.2 0 17.6 4.6 20.4 11.8l-9.6 4c-1.8-4.6-6.2-6.8-10.8-6.8-6.8 0-11.2 3.4-11.2 7.8 0 14 32.8 5 32.8 25.8 0 11.8-9.6 19.6-23.8 19.6-11.2 0-19.8-5-23.2-13.4l9.6-4.6c2.8 6.2 7.4 9 13.6 9 7.4 0 11.8-3.4 11.8-8.4 0-13.6-32.2-5.6-32.2-25.8Z"
+  />
+  <path
+    fill="url(#sj-brand-lg)"
+   d="M108 48h10.2v63c0 14-9 22.4-23.2 22.4-9.6 0-17-4-20.4-10.2l9-5c2.8 4.6 6.8 7 11.4 7 7.4 0 11.4-4.6 11.4-12.4V48Z"
+  />
+  <path
+    fill="url(#sj-brand-lg)"
+    d="M98 128.4c0-5 4-8.4 9.6-8.4s9.6 3.4 9.6 8.4-4 8.4-9.6 8.4-9.6-3.4-9.6-8.4Z"
+  />
+</svg>

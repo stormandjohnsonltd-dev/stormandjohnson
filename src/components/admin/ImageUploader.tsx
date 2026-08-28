@@ -126,7 +126,7 @@ export const ImageUploader = forwardRef<ImageUploaderHandle, ImageUploaderProps>
             Select images
           </button>
           <span className="text-[12px] text-black/50">
-            Images upload to Firebase when you save the product
+            Images upload
           </span>
           <input
             ref={inputRef}
