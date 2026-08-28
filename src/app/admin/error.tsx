@@ -1,0 +1,22 @@
+"use client";
+
+export default function AdminError({
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return (
+    <div className="mx-auto flex min-h-[50vh] max-w-lg flex-col items-center justify-center px-4 py-16 text-center">
+      <h1 className="sj-display text-[28px] font-semibold">Something went wrong</h1>
+      <p className="mt-3 text-[14px] leading-7 text-black/65">Please try again in a moment.</p>
+      <button
+        type="button"
+        onClick={reset}
+        className="mt-6 rounded-xl bg-black px-5 py-3 text-[14px] font-semibold text-white"
+      >
+        Try again
+      </button>
+    </div>
+  );
+}
