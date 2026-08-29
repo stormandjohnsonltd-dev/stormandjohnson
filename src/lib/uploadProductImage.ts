@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import { isServiceUnavailableError } from "@/lib/networkErrors";
 import {
   getFirebaseAdminBucket,
   isFirebaseAdminConfigured,
@@ -59,8 +60,6 @@ export async function uploadProductImageServer(file: File): Promise<string> {
 
   return uploadToFirebase(buffer, filename, mimeType);
 }
-
-import { isServiceUnavailableError } from "@/lib/networkErrors";
 
 export function explainUploadError(err: unknown): string {
   if (isServiceUnavailableError(err)) return "";

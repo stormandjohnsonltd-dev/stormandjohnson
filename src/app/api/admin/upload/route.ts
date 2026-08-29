@@ -3,6 +3,8 @@ import { getSession } from "@/lib/auth";
 import { apiErrorResponse } from "@/lib/apiErrors";
 import { uploadProductImageServer } from "@/lib/uploadProductImage";
 
+export const runtime = "nodejs";
+
 export async function POST(req: Request) {
   const session = await getSession();
   if (!session) {

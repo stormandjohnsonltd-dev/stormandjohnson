@@ -1,10 +1,9 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { isServiceUnavailable } from "@/lib/readApiError";
 import { z } from "zod";
-import { whatsappLink } from "@/lib/utils";
-import { WhatsAppIcon } from "@/components/WhatsAppIcon";
+import { ProductWhatsAppCTA } from "@/components/ProductWhatsAppCTA";
 
 const schema = z.object({
   productSlug: z.string().min(2),
@@ -19,22 +18,15 @@ const schema = z.object({
 export function ProductEnquiryForm({
   productSlug,
   productName,
+  whatsappPhone,
 }: {
   productSlug: string;
   productName: string;
+  whatsappPhone: string;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
-
-  const companyWhatsApp = process.env.WHATSAPP || "";
-  const waUrl = useMemo(() => {
-    if (!companyWhatsApp) return "";
-    return whatsappLink(
-      companyWhatsApp,
-      `Hello Storm & Johnson, I want to order: ${productName}`
-    );
-  }, [companyWhatsApp, productName]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -95,26 +87,12 @@ export function ProductEnquiryForm({
         Continue on WhatsApp and we&apos;ll assist you directly.
       </p>
 
-      {waUrl ? (
-        <a
-          href={waUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-4 flex items-start gap-3 rounded-2xl border border-[#25D366]/30 bg-[#25D366]/10 px-4 py-3 transition hover:bg-[#25D366]/15"
-        >
-          <span className="mt-0.5 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white">
-            <WhatsAppIcon className="h-5 w-5" />
-          </span>
-          <span>
-            <span className="block text-[14px] font-semibold text-[#075E54]">
-              Prefer WhatsApp? Chat with us now
-            </span>
-            <span className="mt-1 block text-[12px] leading-5 text-[#075E54]/80">
-              Send your product interest instantly. Our sales team replies quickly with pricing,
-              availability and delivery options.
-            </span>
-          </span>
-        </a>
+      {whatsappPhone ? (
+        <ProductWhatsAppCTA
+          phone={whatsappPhone}
+          productName={productName}
+          className="mt-4 hidden lg:flex"
+        />
       ) : null}
 
       <form ref={formRef} onSubmit={onSubmit} className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">

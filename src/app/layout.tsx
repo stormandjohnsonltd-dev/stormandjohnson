@@ -3,7 +3,7 @@ import { Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "@/app/globals.css";
 import { SJHeader } from "@/components/SJHeader";
 import { SJFooter } from "@/components/SJFooter";
-import { WhatsAppFloat } from "@/components/WhatsAppFloat";
+import { ConditionalWhatsAppFloat } from "@/components/ConditionalWhatsAppFloat";
 
 const display = Playfair_Display({
   subsets: ["latin"],
@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SJHeader />
         <main>{children}</main>
         <SJFooter />
-        <WhatsAppFloat />
+        <ConditionalWhatsAppFloat />
       </body>
     </html>
   );
