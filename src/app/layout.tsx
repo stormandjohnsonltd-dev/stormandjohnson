@@ -23,13 +23,15 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const whatsappPhone = process.env.WHATSAPP || "2349041140745";
+
   return (
     <html lang="en">
       <body className={`${body.className} ${display.variable}`}>
         <SJHeader />
         <main>{children}</main>
         <SJFooter />
-        <ConditionalWhatsAppFloat />
+        <ConditionalWhatsAppFloat phone={whatsappPhone} />
       </body>
     </html>
   );
