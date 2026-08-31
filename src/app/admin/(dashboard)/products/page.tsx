@@ -57,6 +57,8 @@ export default async function AdminProductsPage() {
     };
   });
 
+  const canCreateProduct = brands.length > 0 && categories.length > 0;
+
   return (
     <div>
       <h1 className="sj-display text-[30px] font-semibold">Products</h1>
@@ -64,6 +66,19 @@ export default async function AdminProductsPage() {
         Create, edit and delete products. Admin can assign brand and category when adding a product.
       </p>
       <div className="mt-6">
+        {!canCreateProduct ? (
+          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] leading-6 text-amber-950">
+            Add at least one{" "}
+            <a href="/admin/brands" className="font-semibold underline">
+              brand
+            </a>{" "}
+            and one{" "}
+            <a href="/admin/categories" className="font-semibold underline">
+              category
+            </a>{" "}
+            before creating products.
+          </div>
+        ) : null}
         <ProductManager products={products} brands={brands} categories={categories} />
       </div>
     </div>

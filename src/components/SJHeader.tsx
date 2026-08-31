@@ -44,12 +44,6 @@ export function SJHeader() {
           >
             Order a Product
           </Link>
-          <Link
-            href="/admin/login"
-            className="inline-flex items-center justify-center rounded-lg border border-black/10 bg-white px-3 py-2 text-[13px] font-semibold transition hover:bg-black/5"
-          >
-            Admin
-          </Link>
         </div>
 
         <button
@@ -79,20 +73,13 @@ export function SJHeader() {
               </Link>
             ))}
           </nav>
-          <div className="mt-3 flex gap-2">
+          <div className="mt-3">
             <Link
               href="/products"
               onClick={() => setOpen(false)}
-              className="flex-1 rounded-lg bg-black px-4 py-2.5 text-center text-[13px] font-semibold text-white"
+              className="inline-flex w-full items-center justify-center rounded-lg bg-black px-4 py-2.5 text-[13px] font-semibold text-white"
             >
-              Order
-            </Link>
-            <Link
-              href="/admin/login"
-              onClick={() => setOpen(false)}
-              className="rounded-lg border border-black/10 px-4 py-2.5 text-[13px] font-semibold"
-            >
-              Admin
+              Order a Product
             </Link>
           </div>
         </div>

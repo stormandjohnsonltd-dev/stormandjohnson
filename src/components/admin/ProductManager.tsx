@@ -97,6 +97,8 @@ export function ProductManager({
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<"name" | "price" | "stock" | "status">("name");
 
+  const canCreateProduct = brands.length > 0 && categories.length > 0;
+
   const canSubmit = useMemo(
     () =>
       !!form.name.trim() &&
@@ -106,6 +108,17 @@ export function ProductManager({
       !!form.categoryId,
     [form]
   );
+
+  const submitHint = useMemo(() => {
+    if (canSubmit) return null;
+    const missing: string[] = [];
+    if (!form.name.trim()) missing.push("product name");
+    if (!form.description.trim()) missing.push("description");
+    if (!form.price) missing.push("price");
+    if (!form.brandId) missing.push("brand");
+    if (!form.categoryId) missing.push("category");
+    return missing.length ? `Add ${missing.join(", ")} to enable create.` : null;
+  }, [canSubmit, form]);
 
   const sortedProducts = useMemo(() => {
     const list = [...products];
@@ -270,7 +283,8 @@ export function ProductManager({
           <button
             type="button"
             onClick={openCreate}
-            className="rounded-xl bg-black px-4 py-2.5 text-[13px] font-semibold text-white transition hover:bg-black/90"
+            disabled={!canCreateProduct}
+            className="rounded-xl bg-black px-4 py-2.5 text-[13px] font-semibold text-white transition hover:bg-black/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Create new product
           </button>
@@ -492,11 +506,15 @@ export function ProductManager({
               <div className="mt-4 text-[13px] font-semibold text-red-700">{formError}</div>
             ) : null}
 
+            {submitHint && !loading ? (
+              <p className="mt-3 text-[12px] leading-5 text-black/55">{submitHint}</p>
+            ) : null}
+
             <button
               type="button"
               onClick={submit}
               disabled={loading || !canSubmit}
-              className="mt-5 w-full rounded-xl bg-black px-4 py-3 text-[13px] font-semibold text-white disabled:opacity-60"
+              className="mt-3 w-full rounded-xl bg-black px-4 py-3 text-[13px] font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
               {submitButtonLabel}
             </button>
