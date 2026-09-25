@@ -27,6 +27,7 @@ const schema = z.object({
   stock: z.coerce.number().int().min(0).optional(),
   isFeatured: z.boolean().optional(),
   isActive: z.boolean().optional(),
+  isAdvertised: z.boolean().optional(),
 });
 
 export async function PUT(req: Request, { params }: { params: Promise<{ slug: string }> }) {
@@ -72,6 +73,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ slug: st
     product.stock = parsed.data.stock ?? 0;
     product.isFeatured = parsed.data.isFeatured ?? false;
     product.isActive = parsed.data.isActive ?? true;
+    product.isAdvertised = parsed.data.isAdvertised ?? false;
 
     await product.save();
 
@@ -85,6 +87,38 @@ export async function PUT(req: Request, { params }: { params: Promise<{ slug: st
     return NextResponse.json({ ok: true, product, newSlug });
   } catch (err) {
     return apiErrorResponse(err, "Failed to update product.");
+  }
+}
+
+export async function PATCH(req: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  try {
+    const { slug } = await params;
+    const json = await req.json();
+    const parsed = z.object({ isAdvertised: z.boolean() }).safeParse(json);
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    }
+
+    await connectDB();
+    const product = await Product.findOne({ slug });
+    if (!product) return NextResponse.json({ error: "Product not found." }, { status: 404 });
+
+    product.isAdvertised = parsed.data.isAdvertised;
+    await product.save();
+
+    try {
+      const { warmCatalogCache } = await import("@/lib/queries");
+      await warmCatalogCache();
+    } catch {
+      // Cache refresh is best-effort.
+    }
+
+    return NextResponse.json({ ok: true, isAdvertised: product.isAdvertised });
+  } catch (err) {
+    return apiErrorResponse(err, "Failed to update product advertising.");
   }
 }
 

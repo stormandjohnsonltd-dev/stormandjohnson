@@ -4,6 +4,9 @@ import "@/app/globals.css";
 import { SJHeader } from "@/components/SJHeader";
 import { SJFooter } from "@/components/SJFooter";
 import { ConditionalWhatsAppFloat } from "@/components/ConditionalWhatsAppFloat";
+import { FacebookPixel } from "@/components/FacebookPixel";
+import { getCompany } from "@/lib/queries";
+import { parseFacebookPixelConfig } from "@/lib/facebookPixel";
 
 const display = Playfair_Display({
   subsets: ["latin"],
@@ -22,12 +25,19 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.SITE_URL || "http://localhost:3000"),
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const whatsappPhone = process.env.WHATSAPP || "2349041140745";
+  const company = await getCompany();
+  const pixel = parseFacebookPixelConfig({
+    baseCode: company?.facebookPixelBaseCode,
+    conversionCode: company?.facebookConversionCode,
+    pixelIds: company?.facebookPixelIds,
+  });
 
   return (
     <html lang="en">
       <body className={`${body.className} ${display.variable}`}>
+        <FacebookPixel pixelIds={pixel.pixelIds} conversionEvents={pixel.conversionEvents} />
         <SJHeader />
         <main>{children}</main>
         <SJFooter />

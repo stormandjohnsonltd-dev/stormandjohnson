@@ -20,6 +20,7 @@ type Product = {
   stock: number;
   isFeatured: boolean;
   isActive: boolean;
+  isAdvertised: boolean;
   features?: string[];
   specs?: Array<{ label: string; value: string }>;
   brand?: Brand;
@@ -38,6 +39,7 @@ type ProductFormState = {
   stock: string;
   isFeatured: boolean;
   isActive: boolean;
+  isAdvertised: boolean;
   features: string;
   specs: string;
 };
@@ -54,6 +56,7 @@ const emptyForm: ProductFormState = {
   stock: "0",
   isFeatured: false,
   isActive: true,
+  isAdvertised: false,
   features: "",
   specs: "",
 };
@@ -95,7 +98,9 @@ export function ProductManager({
   const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [sortKey, setSortKey] = useState<"name" | "price" | "stock" | "status">("name");
+  const [sortKey, setSortKey] = useState<"name" | "price" | "stock" | "status" | "ads">("name");
+  const [advertisingSlug, setAdvertisingSlug] = useState<string | null>(null);
+  const [advertiseError, setAdvertiseError] = useState<string | null>(null);
 
   const canCreateProduct = brands.length > 0 && categories.length > 0;
 
@@ -128,6 +133,9 @@ export function ProductManager({
       if (sortKey === "status") {
         return Number(b.isActive) - Number(a.isActive) || a.name.localeCompare(b.name);
       }
+      if (sortKey === "ads") {
+        return Number(b.isAdvertised) - Number(a.isAdvertised) || a.name.localeCompare(b.name);
+      }
       return a.name.localeCompare(b.name);
     });
     return list;
@@ -155,6 +163,7 @@ export function ProductManager({
       stock: String(product.stock ?? 0),
       isFeatured: product.isFeatured,
       isActive: product.isActive,
+      isAdvertised: Boolean(product.isAdvertised),
       features: product.features?.join("\n") || "",
       specs: product.specs?.map((s) => `${s.label}:${s.value}`).join("\n") || "",
     });
@@ -181,6 +190,7 @@ export function ProductManager({
       stock: Number(form.stock || 0),
       isFeatured: form.isFeatured,
       isActive: form.isActive,
+      isAdvertised: form.isAdvertised,
       features: form.features
         .split("\n")
         .map((s) => s.trim())
@@ -259,6 +269,29 @@ export function ProductManager({
     }
   }
 
+  async function setProductAdvertised(product: Product, isAdvertised: boolean) {
+    if (product.isAdvertised === isAdvertised) return;
+    setAdvertisingSlug(product.slug);
+    try {
+      const res = await fetch(`/api/admin/products/${product.slug}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isAdvertised }),
+      });
+      if (!res.ok) {
+        if (isServiceUnavailable(res)) return;
+        setAdvertiseError("Failed to update advertising.");
+        return;
+      }
+      setAdvertiseError(null);
+      router.refresh();
+    } catch {
+      setAdvertiseError("Failed to update advertising.");
+    } finally {
+      setAdvertisingSlug(null);
+    }
+  }
+
   return (
     <div>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -278,6 +311,7 @@ export function ProductManager({
               <option value="price">Price</option>
               <option value="stock">Stock</option>
               <option value="status">Status</option>
+              <option value="ads">Advertising</option>
             </select>
           </label>
           <button
@@ -291,6 +325,10 @@ export function ProductManager({
         </div>
       </div>
 
+      {advertiseError ? (
+        <p className="mt-3 text-[12px] font-semibold text-red-700">{advertiseError}</p>
+      ) : null}
+
       <div className="mt-5 overflow-x-auto rounded-2xl border border-black/10 bg-white">
         <table className="min-w-full text-left text-[13px]">
           <thead className="border-b border-black/10 bg-black/[0.02] text-[12px] uppercase tracking-[0.06em] text-black/50">
@@ -301,13 +339,14 @@ export function ProductManager({
               <th className="px-4 py-3 font-semibold">Price</th>
               <th className="px-4 py-3 font-semibold">Stock</th>
               <th className="px-4 py-3 font-semibold">Status</th>
+              <th className="px-4 py-3 font-semibold">Advertise</th>
               <th className="px-4 py-3 font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody>
             {sortedProducts.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-black/55">
+                <td colSpan={8} className="px-4 py-8 text-black/55">
                   No products yet. Click “Create new product” to add one.
                 </td>
               </tr>
@@ -324,6 +363,17 @@ export function ProductManager({
                   <td className="px-4 py-3 text-black/70">
                     {product.isActive ? "Active" : "Inactive"}
                     {product.isFeatured ? " · Featured" : ""}
+                  </td>
+                  <td className="px-4 py-3">
+                    <select
+                      value={product.isAdvertised ? "yes" : "no"}
+                      disabled={advertisingSlug === product.slug}
+                      onChange={(e) => setProductAdvertised(product, e.target.value === "yes")}
+                      className="rounded-lg border border-black/10 px-2.5 py-1.5 text-[12px] font-semibold"
+                    >
+                      <option value="no">No</option>
+                      <option value="yes">Yes</option>
+                    </select>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
@@ -499,6 +549,22 @@ export function ProductManager({
                   />
                   Active
                 </label>
+              </div>
+              <div className="sm:col-span-2">
+                <Field label="Advertise this product with Facebook Pixel?">
+                  <select
+                    value={form.isAdvertised ? "yes" : "no"}
+                    onChange={(e) => setForm((s) => ({ ...s, isAdvertised: e.target.value === "yes" }))}
+                    className={inputCls}
+                  >
+                    <option value="no">No — pixel will not cover this product</option>
+                    <option value="yes">Yes — pixel will track views and orders</option>
+                  </select>
+                </Field>
+                <p className="mt-1.5 text-[12px] leading-5 text-black/55">
+                  Choose Yes if this product is running Facebook ads. The pixel then counts
+                  product views and orders (enquiry or WhatsApp).
+                </p>
               </div>
             </div>
 

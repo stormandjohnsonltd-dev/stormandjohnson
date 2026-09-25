@@ -27,6 +27,7 @@ const schema = z.object({
   stock: z.coerce.number().int().min(0).optional(),
   isFeatured: z.boolean().optional(),
   isActive: z.boolean().optional(),
+  isAdvertised: z.boolean().optional(),
 });
 
 export async function GET() {
@@ -81,6 +82,7 @@ export async function POST(req: Request) {
       stock: parsed.data.stock ?? 0,
       isFeatured: parsed.data.isFeatured ?? false,
       isActive: parsed.data.isActive ?? true,
+      isAdvertised: parsed.data.isAdvertised ?? false,
     });
 
     try {

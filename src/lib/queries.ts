@@ -27,6 +27,7 @@ function mapProductCard(p: {
   images?: string[];
   shortDescription?: string;
   isFeatured?: boolean;
+  isAdvertised?: boolean;
   stock?: number;
   description?: string;
   compareAtPrice?: number;
@@ -43,6 +44,7 @@ function mapProductCard(p: {
     images: p.images ? [...p.images] : undefined,
     shortDescription: p.shortDescription,
     isFeatured: p.isFeatured,
+    isAdvertised: p.isAdvertised,
     stock: p.stock,
     description: p.description,
     compareAtPrice: p.compareAtPrice,
@@ -261,12 +263,14 @@ export async function getProductBySlug(slug: string): Promise<ProductDetail | nu
       features: serializeStringList(product.features),
       brand: serializeNamedRef(product.brand),
       category: serializeNamedRef(product.category),
+      isAdvertised: product.isAdvertised ?? false,
     };
 
     upsertCachedProducts([
       {
         ...detail,
         isFeatured: product.isFeatured,
+        isAdvertised: product.isAdvertised ?? false,
         stock: product.stock,
       },
     ]);

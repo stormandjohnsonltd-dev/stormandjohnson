@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { isServiceUnavailable } from "@/lib/readApiError";
+import { parseFacebookPixelConfig } from "@/lib/facebookPixel";
 
 type Company = {
   name?: string;
@@ -19,6 +20,9 @@ type Company = {
     twitter?: string;
     linkedin?: string;
   };
+  facebookPixelIds?: string[];
+  facebookPixelBaseCode?: string;
+  facebookConversionCode?: string;
 };
 
 const inputCls = "w-full rounded-xl border border-black/10 px-3 py-2 text-[13px]";
@@ -57,9 +61,20 @@ export function CompanyForm({ company }: { company: Company | null }) {
     instagram: company?.socialLinks?.instagram || "",
     twitter: company?.socialLinks?.twitter || "",
     linkedin: company?.socialLinks?.linkedin || "",
+    facebookPixelBaseCode:
+      company?.facebookPixelBaseCode || company?.facebookPixelIds?.join("\n") || "",
+    facebookConversionCode: company?.facebookConversionCode || "",
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const pixelPreview = useMemo(
+    () =>
+      parseFacebookPixelConfig({
+        baseCode: form.facebookPixelBaseCode,
+        conversionCode: form.facebookConversionCode,
+      }),
+    [form.facebookPixelBaseCode, form.facebookConversionCode]
+  );
 
   async function onSave() {
     setLoading(true);
@@ -180,6 +195,50 @@ export function CompanyForm({ company }: { company: Company | null }) {
             className={inputCls}
           />
         </Field>
+        <Field label="Facebook Pixel — Batch 1 (base code or Pixel ID)" className="md:col-span-2">
+          <textarea
+            value={form.facebookPixelBaseCode}
+            onChange={(e) => setForm((s) => ({ ...s, facebookPixelBaseCode: e.target.value }))}
+            rows={8}
+            placeholder="Paste the Facebook Pixel base code here, or a Pixel ID."
+            className={`${inputCls} font-mono text-[12px]`}
+          />
+          <p className="mt-1.5 text-[12px] leading-5 text-black/55">
+            This is the first batch Facebook gives you. Paste the full base script, or just the
+            Pixel ID. It loads on the public site.
+          </p>
+        </Field>
+        <Field label="Facebook Pixel — Batch 2 (conversion / event code)" className="md:col-span-2">
+          <textarea
+            value={form.facebookConversionCode}
+            onChange={(e) => setForm((s) => ({ ...s, facebookConversionCode: e.target.value }))}
+            rows={6}
+            placeholder="Paste the conversion pixel or event code Facebook gives you for purchases."
+            className={`${inputCls} font-mono text-[12px]`}
+          />
+          <p className="mt-1.5 text-[12px] leading-5 text-black/55">
+            This is the second batch. It fires only when someone orders an advertised product
+            (enquiry form or WhatsApp). If this is empty, orders still send a Purchase event.
+          </p>
+        </Field>
+        {pixelPreview.pixelIds.length || pixelPreview.conversionEvents.length ? (
+          <div className="rounded-xl border border-black/10 bg-black/[0.02] px-3 py-2 text-[12px] leading-5 text-black/65 md:col-span-2">
+            {pixelPreview.pixelIds.length ? (
+              <div>
+                Detected Pixel ID{pixelPreview.pixelIds.length > 1 ? "s" : ""}:{" "}
+                <span className="font-semibold text-black">{pixelPreview.pixelIds.join(", ")}</span>
+              </div>
+            ) : null}
+            {pixelPreview.conversionEvents.length ? (
+              <div className={pixelPreview.pixelIds.length ? "mt-1" : ""}>
+                Detected conversion event{pixelPreview.conversionEvents.length > 1 ? "s" : ""}:{" "}
+                <span className="font-semibold text-black">
+                  {pixelPreview.conversionEvents.join(", ")}
+                </span>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
       </div>
       {message ? <div className="mt-4 text-[13px] font-semibold text-black/70">{message}</div> : null}
       <button

@@ -18,7 +18,14 @@ export async function SJFooter() {
 
   try {
     const company = await getCompany();
-    socialLinks = company?.socialLinks || null;
+    socialLinks = company?.socialLinks
+      ? {
+          facebook: company.socialLinks.facebook || "",
+          instagram: company.socialLinks.instagram || "",
+          twitter: company.socialLinks.twitter || "",
+          linkedin: company.socialLinks.linkedin || "",
+        }
+      : null;
   } catch (err) {
     if (!isMongoConnectionError(err)) {
       // Keep footer rendering even if company lookup fails for other reasons.

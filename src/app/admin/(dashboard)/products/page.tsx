@@ -49,6 +49,7 @@ export default async function AdminProductsPage() {
       images: p.images ? [...p.images] : [],
       stock: p.stock,
       isFeatured: p.isFeatured,
+      isAdvertised: Boolean(p.isAdvertised),
       isActive: p.isActive,
       features: serializeStringList(p.features),
       specs: serializeSpecs(p.specs),
@@ -63,7 +64,8 @@ export default async function AdminProductsPage() {
     <div>
       <h1 className="sj-display text-[30px] font-semibold">Products</h1>
       <p className="mt-2 text-[14px] text-black/65">
-        Create, edit and delete products. Admin can assign brand and category when adding a product.
+        Create, edit and delete products. Choose whether each product should be advertised
+        so Facebook Pixel counts its views and orders.
       </p>
       <div className="mt-6">
         {!canCreateProduct ? (

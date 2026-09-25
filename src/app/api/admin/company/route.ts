@@ -4,6 +4,7 @@ import { getSession } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import { apiErrorResponse } from "@/lib/apiErrors";
 import { Company } from "@/models/Company";
+import { parseFacebookPixelConfig } from "@/lib/facebookPixel";
 
 const schema = z.object({
   name: z.string().min(2),
@@ -19,6 +20,9 @@ const schema = z.object({
   instagram: z.string().optional(),
   twitter: z.string().optional(),
   linkedin: z.string().optional(),
+  facebookPixelIds: z.union([z.array(z.string()), z.string()]).optional(),
+  facebookPixelBaseCode: z.string().optional(),
+  facebookConversionCode: z.string().optional(),
 });
 
 export async function GET() {
@@ -52,6 +56,12 @@ export async function PUT(req: Request) {
             .filter(Boolean)
         : parsed.data.whatsappNumbers ?? [];
 
+    const pixel = parseFacebookPixelConfig({
+      baseCode: parsed.data.facebookPixelBaseCode,
+      conversionCode: parsed.data.facebookConversionCode,
+      pixelIds: parsed.data.facebookPixelIds,
+    });
+
     const update = {
       name: parsed.data.name,
       tagline: parsed.data.tagline,
@@ -68,6 +78,10 @@ export async function PUT(req: Request) {
         twitter: parsed.data.twitter,
         linkedin: parsed.data.linkedin,
       },
+      facebookPixelBaseCode: parsed.data.facebookPixelBaseCode?.trim() || "",
+      facebookConversionCode: parsed.data.facebookConversionCode?.trim() || "",
+      facebookPixelIds: pixel.pixelIds,
+      facebookConversionEvents: pixel.conversionEvents,
     };
 
     const existing = await Company.findOne();

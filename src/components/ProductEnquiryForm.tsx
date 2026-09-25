@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { isServiceUnavailable } from "@/lib/readApiError";
 import { z } from "zod";
 import { ProductWhatsAppCTA } from "@/components/ProductWhatsAppCTA";
+import { trackAdvertisedProductOrder } from "@/lib/facebookPixel";
 
 const schema = z.object({
   productSlug: z.string().min(2),
@@ -19,10 +20,16 @@ export function ProductEnquiryForm({
   productSlug,
   productName,
   whatsappPhone,
+  advertised = false,
+  productId,
+  price = 0,
 }: {
   productSlug: string;
   productName: string;
   whatsappPhone: string;
+  advertised?: boolean;
+  productId?: string;
+  price?: number;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -71,6 +78,13 @@ export function ProductEnquiryForm({
 
       form.reset();
       setStatus("success");
+      trackAdvertisedProductOrder({
+        advertised,
+        productId: productId || productSlug,
+        productName,
+        price,
+        quantity: parsed.data.quantity,
+      });
     } catch (err: unknown) {
       setStatus("error");
       setError(err instanceof Error ? err.message : "Something went wrong.");
@@ -91,6 +105,9 @@ export function ProductEnquiryForm({
         <ProductWhatsAppCTA
           phone={whatsappPhone}
           productName={productName}
+          advertised={advertised}
+          productId={productId || productSlug}
+          price={price}
           className="mt-4 hidden lg:flex"
         />
       ) : null}

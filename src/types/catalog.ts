@@ -27,4 +27,5 @@ export type ProductDetail = {
   category?: NamedRef | null;
   specs?: Array<{ label: string; value: string }>;
   features?: string[];
+  isAdvertised?: boolean;
 };

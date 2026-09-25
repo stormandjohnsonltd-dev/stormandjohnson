@@ -15,6 +15,7 @@ export interface IProduct {
   stock: number;
   isFeatured: boolean;
   isActive: boolean;
+  isAdvertised: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,6 +41,7 @@ const ProductSchema = new Schema<IProduct>(
     stock: { type: Number, default: 0 },
     isFeatured: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
+    isAdvertised: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

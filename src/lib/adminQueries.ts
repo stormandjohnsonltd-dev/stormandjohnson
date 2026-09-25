@@ -7,6 +7,7 @@ import { Enquiry } from "@/models/Enquiry";
 import { Distributor } from "@/models/Distributor";
 import { ContactMessage } from "@/models/ContactMessage";
 import { Company } from "@/models/Company";
+import { serializeCompany } from "@/lib/serialize";
 
 export type AdminQueryResult<T> = {
   data: T;
@@ -68,6 +69,7 @@ export async function getAdminProducts() {
       images: p.images || [],
       stock: p.stock ?? 0,
       isFeatured: p.isFeatured ?? false,
+      isAdvertised: p.isAdvertised ?? false,
       isActive: true,
       features: p.features || [],
       specs: p.specs || [],
@@ -98,5 +100,5 @@ export async function getAdminContacts() {
 }
 
 export async function getAdminCompany() {
-  return runQuery(() => Company.findOne().lean(), null);
+  return runQuery(async () => serializeCompany(await Company.findOne().lean()), null);
 }

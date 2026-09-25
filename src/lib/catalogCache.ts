@@ -5,6 +5,7 @@ import type { NamedRef, ProductCard, ProductDetail } from "@/types/catalog";
 export type CachedProduct = ProductCard & {
   shortDescription?: string;
   isFeatured?: boolean;
+  isAdvertised?: boolean;
   stock?: number;
   description?: string;
   compareAtPrice?: number;
@@ -155,6 +156,7 @@ export function getCachedProductBySlug(slug: string): ProductDetail | null {
     features: product.features,
     brand: product.brand ?? null,
     category: product.category ?? null,
+    isAdvertised: product.isAdvertised ?? false,
   };
 }
 

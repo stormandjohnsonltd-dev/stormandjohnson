@@ -16,6 +16,10 @@ export interface ICompany {
     twitter?: string;
     linkedin?: string;
   };
+  facebookPixelIds?: string[];
+  facebookPixelBaseCode?: string;
+  facebookConversionCode?: string;
+  facebookConversionEvents?: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -37,6 +41,10 @@ const CompanySchema = new Schema<ICompany>(
       twitter: String,
       linkedin: String,
     },
+    facebookPixelIds: [{ type: String }],
+    facebookPixelBaseCode: { type: String },
+    facebookConversionCode: { type: String },
+    facebookConversionEvents: [{ type: String }],
   },
   { timestamps: true }
 );

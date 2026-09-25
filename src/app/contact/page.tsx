@@ -19,7 +19,14 @@ export default async function ContactPage() {
 
   try {
     const company = await getCompany();
-    socialLinks = company?.socialLinks || null;
+    socialLinks = company?.socialLinks
+      ? {
+          facebook: company.socialLinks.facebook || "",
+          instagram: company.socialLinks.instagram || "",
+          twitter: company.socialLinks.twitter || "",
+          linkedin: company.socialLinks.linkedin || "",
+        }
+      : null;
   } catch (err) {
     if (!isMongoConnectionError(err)) console.error(err);
   }

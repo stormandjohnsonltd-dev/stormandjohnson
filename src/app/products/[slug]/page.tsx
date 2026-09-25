@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/lib/queries";
 import { ProductEnquiryForm } from "@/components/ProductEnquiryForm";
+import { ProductPixelTracker } from "@/components/ProductPixelTracker";
 import { ProductGallery } from "@/components/ProductGallery";
 import {
   ProductWhatsAppCTA,
@@ -22,9 +23,17 @@ export default async function ProductDetailPage({
 
   const images = product.images?.length ? product.images : [];
   const whatsappPhone = process.env.WHATSAPP || "2349041140745";
+  const advertised = Boolean(product.isAdvertised);
+  const pixelProduct = {
+    advertised,
+    productId: product._id || product.slug,
+    productName: product.name,
+    price: product.price,
+  };
 
   return (
     <>
+      <ProductPixelTracker {...pixelProduct} />
       <div className="mx-auto max-w-6xl px-4 py-10 pb-24 lg:pb-10">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           <div>
@@ -53,8 +62,8 @@ export default async function ProductDetailPage({
               </div>
 
               <div className="mt-5 space-y-3 lg:hidden">
-                <ProductWhatsAppCTA phone={whatsappPhone} productName={product.name} />
-                <ProductWhatsAppOrderButton phone={whatsappPhone} productName={product.name} />
+                <ProductWhatsAppCTA phone={whatsappPhone} {...pixelProduct} />
+                <ProductWhatsAppOrderButton phone={whatsappPhone} {...pixelProduct} />
               </div>
 
               {product.specs?.length ? (
@@ -92,12 +101,15 @@ export default async function ProductDetailPage({
               productSlug={product.slug}
               productName={product.name}
               whatsappPhone={whatsappPhone}
+              advertised={advertised}
+              productId={pixelProduct.productId}
+              price={product.price}
             />
           </div>
         </div>
       </div>
 
-      <ProductWhatsAppMobileBar phone={whatsappPhone} productName={product.name} />
+      <ProductWhatsAppMobileBar phone={whatsappPhone} {...pixelProduct} />
     </>
   );
 }
